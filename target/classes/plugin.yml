@@ -1,0 +1,37 @@
+name: LukesWhimsy
+version: '1.1'
+main: me.nohbdyexe.lukesWhimsy.LukesWhimsy
+author: nohbdy-exe
+website: https://github.com/nohbdy-exe/lukeswhimsy
+api-version: '1.21'
+commands:
+  smite:
+    description: Smite a player with lightning.
+    usage: /<command> <player>
+  sit:
+    description: Sit somewhere, or on someone else's head.
+    usage: /<command> [player]
+  fling:
+    description: Fling yourself or a player with varying levels of knockback.
+    usage: /<command> [player] [knockback]
+  onepunchman:
+    description: Become the hero you were born to be. Beat them with one punch.
+    usage: /<command>
+  catapult:
+    description: Launch a giant projectile into the skies.
+    usage: /<command>
+  heal:
+    description: Heal yourself or another player.
+    usage: /<command>
+  feed:
+    description: Feed yourself or another player to full satiation.
+    usage: /<command>
+  fly:
+    description: Enable flying mode for yourself or someone else.
+    usage: /<command>
+  whimsyhelp:
+    description: A list of all my whimsical commands.
+    usage: /<command>
+  hng:
+    description: Make a villager noise.
+    usage: /<command>
