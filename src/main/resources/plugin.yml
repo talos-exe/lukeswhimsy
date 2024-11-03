@@ -1,0 +1,11 @@
+name: LukesWhimsy
+version: '1.0'
+main: me.nohbdyexe.lukesWhimsy.LukesWhimsy
+api-version: '1.21'
+commands:
+  smite:
+    description: Smite a player with lightning.
+    usage: /<command> <player>
+  sit:
+    description: Sit somewhere, or on someone else's head.
+    usage: /<command> [player]
