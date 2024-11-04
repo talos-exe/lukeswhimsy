@@ -78,7 +78,7 @@ public class BabyTrapCommand implements CommandExecutor, Listener {
     }
 
     private void summonBabyZombiesAround(Location loc) {
-        for (int i=0; i<10; i++) {
+        for (int i=0; i<3; i++) {
             Location spawnLocation = loc.clone().add((Math.random() - 0.5) * 5, 0, (Math.random() - 0.5) * 5);
             // Spawn the zombie and cast it to Zombie.
             Zombie babyZombie = (Zombie) spawnLocation.getWorld().spawnEntity(spawnLocation, EntityType.ZOMBIE);

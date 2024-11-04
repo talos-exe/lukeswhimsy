@@ -7,23 +7,27 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.UUID;
 
-public class SitCommand implements CommandExecutor, Listener{
+public class SitCommand implements CommandExecutor, Listener {
 
     private HashMap<UUID, ArmorStand> sittingPlayers = new HashMap<>();
+    private HashSet<UUID> sittingOnPlayer = new HashSet<>();
     private String PLUGIN_PREFIX;
+    private static final double SIT_RADIUS = 5.0; // Maximum distance to sit on another player.
 
     public SitCommand(LukesWhimsy plugin) {
         this.sittingPlayers = plugin.getSittingPlayers();
         this.PLUGIN_PREFIX = plugin.getPluginPrefix();
-        plugin.getServer().getPluginManager().registerEvents(this,plugin);
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     @Override
@@ -36,59 +40,28 @@ public class SitCommand implements CommandExecutor, Listener{
         //
         ///////////////
         if (command.getName().equalsIgnoreCase("sit")) {
-            if(!(sender instanceof Player)) {
+            if (!(sender instanceof Player)) {
                 sender.sendMessage(PLUGIN_PREFIX + "Only players can use this command.");
                 return true;
             }
 
             Player player = (Player) sender;
+            Player targetPlayer = null;
 
-            //Check if player is already sitting
-            if (sittingPlayers.containsKey(player.getUniqueId())) {
-                //Stand up the player
-                ArmorStand stand = sittingPlayers.get(player.getUniqueId());
-                stand.remove();
-                sittingPlayers.remove(player.getUniqueId()); // Remove from hashmap
-                player.sendMessage(PLUGIN_PREFIX + "Standing.");
-                return true;
-            }
-
-            if (args.length > 0) {
-                // Try to sit on another player's head
-                Player targetPlayer = Bukkit.getPlayer(args[0]);
-                if (targetPlayer != null && targetPlayer.isOnline()) {
-                    if (player.getUniqueId().equals(targetPlayer.getUniqueId())) {
-                        player.sendMessage( PLUGIN_PREFIX + "You cannot sit on yourself!");
-                        return true; // Stop processing further
-                    }
-
-                    if (!sittingPlayers.containsKey(targetPlayer.getUniqueId())) {
-                        targetPlayer.addPassenger(player);
-                        player.sendMessage(PLUGIN_PREFIX + "You are now sitting on " + targetPlayer.getName() +"'s head.");
-                        sittingPlayers.put(player.getUniqueId(), null);
-                    } else {
-                        player.sendMessage(PLUGIN_PREFIX+"You cannot sit on top of a player that is already sitting.");
-                    }
-                } else {
-                    player.sendMessage(PLUGIN_PREFIX + "Player not found.");
+            if (args.length == 1) {
+                targetPlayer = Bukkit.getPlayer(args[0]);
+                if (targetPlayer == null || !targetPlayer.isOnline()) {
+                    sender.sendMessage(PLUGIN_PREFIX + "Player not found.");
                     return true;
                 }
+
+                if (player.getUniqueId().equals(targetPlayer.getUniqueId())) {
+                    player.sendMessage(PLUGIN_PREFIX + "You cannot sit on yourself!");
+                    return true;
+                }
+                handleSitOnPlayerCommand(player, targetPlayer);
             } else {
-                // Sit at the current location
-                Location loc = player.getLocation();
-                ArmorStand stand = loc.getWorld().spawn(loc, ArmorStand.class);
-                stand.setVisible(false);
-                stand.setGravity(false);
-                stand.setMarker(true);
-                stand.setInvulnerable(true);
-                stand.setCollidable(false);
-                stand.setSmall(true);
-
-                stand.addPassenger(player);
-
-                sittingPlayers.put(player.getUniqueId(), stand);
-                player.sendMessage(PLUGIN_PREFIX + "You are now sitting.");
-                return true;
+                handleSitCommand(player);
             }
             return true;
         }
@@ -98,15 +71,74 @@ public class SitCommand implements CommandExecutor, Listener{
     @EventHandler
     public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
         Player player = event.getPlayer();
-        if (sittingPlayers.containsKey(player.getUniqueId()) && event.isSneaking()) {
-            // If the player is sitting and now sneaking (shifting), stand them up
-            ArmorStand stand = sittingPlayers.get(player.getUniqueId());
-            if (stand != null) {
-                stand.remove();
+        //Check if player is sitting on armor stand or another player
+        if (sittingPlayers.containsKey(player.getUniqueId()) || sittingOnPlayer.contains(player.getUniqueId())) {
+            if (event.isSneaking()) {
+                if (sittingPlayers.containsKey(player.getUniqueId())) { // Check if they're sitting down or on another player.
+                    ArmorStand stand = sittingPlayers.get(player.getUniqueId());
+                    if (stand != null) {
+                        stand.remove();
+                    }
+                    sittingPlayers.remove(player.getUniqueId()); // Remove from hashmap
+                } else {
+                    sittingOnPlayer.remove(player.getUniqueId()); // Remove from on top of player.
+                }
+                player.sendMessage(PLUGIN_PREFIX + "You stood up.");
             }
-            sittingPlayers.remove(player.getUniqueId()); // Remove from hashmap
-            player.sendMessage(PLUGIN_PREFIX + "You stood up!");
         }
     }
 
+    private void handleSitCommand(Player player) {
+        // Check if the player is already sitting
+        if (sittingPlayers.containsKey(player.getUniqueId())) {
+            ArmorStand stand = sittingPlayers.get(player.getUniqueId());
+            if (stand != null) {
+                stand.remove(); // Remove the armor stand if sitting on it
+            }
+            sittingPlayers.remove(player.getUniqueId());
+            player.sendMessage(PLUGIN_PREFIX + "You stood up.");
+        }
+        else if (sittingOnPlayer.contains(player.getUniqueId())) {
+            sittingOnPlayer.remove(player.getUniqueId());
+            Entity targetPlayerVehicle = player.getVehicle();
+            targetPlayerVehicle.removePassenger(player);
+            player.sendMessage(PLUGIN_PREFIX + "You stood up.");
+        } else {
+            // Make the player sit at their current location
+            Location loc = player.getLocation();
+            ArmorStand stand = loc.getWorld().spawn(loc, ArmorStand.class);
+            stand.setVisible(false);
+            stand.setGravity(false);
+            stand.setMarker(true);
+            stand.setInvulnerable(true);
+            stand.setCollidable(false);
+            stand.setSmall(true);
+
+            stand.addPassenger(player);
+            sittingPlayers.put(player.getUniqueId(), stand);
+            player.sendMessage(PLUGIN_PREFIX + "You are now sitting.");
+        }
+    }
+
+    private void handleSitOnPlayerCommand(Player sitter, Player target) {
+        // Check if sender is already sitting on someone.
+        if (sittingOnPlayer.contains(sitter.getUniqueId())) {
+            target.removePassenger(sitter);
+            sittingOnPlayer.remove(sitter.getUniqueId());
+        }
+
+        if (sittingPlayers.containsKey(sitter.getUniqueId())) {
+            sittingPlayers.remove(sitter.getUniqueId());
+        }
+
+        if (sitter.getLocation().distance(target.getLocation()) > SIT_RADIUS) {
+            sitter.sendMessage(PLUGIN_PREFIX+"That player is too far away.");
+            return;
+        }
+
+        target.addPassenger(sitter);
+        sittingOnPlayer.add(sitter.getUniqueId());
+        sitter.sendMessage(PLUGIN_PREFIX + "You are now sitting on " + target.getName());
+        target.sendMessage(PLUGIN_PREFIX + sitter.getName() + " is now sitting on your head.");
+    }
 }

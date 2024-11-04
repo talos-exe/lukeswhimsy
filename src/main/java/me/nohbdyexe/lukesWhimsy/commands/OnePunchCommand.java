@@ -5,6 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -57,16 +58,35 @@ public class OnePunchCommand implements CommandExecutor, Listener {
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player) {
-            Player player = (Player) event.getDamager();
+        if (event.getDamager() instanceof Player || event.getDamager() instanceof Arrow) {
+            Player player = null;
+            if (event.getDamager() instanceof Player) {
+                player = (Player) event.getDamager();
+            } else if (event.getDamager() instanceof Arrow) {
+                Arrow arrow = (Arrow) event.getDamager();
+                // Get shooter of arrow
+                if (arrow.getShooter() instanceof Player) {
+                    player = (Player) arrow.getShooter();
+                } else {
+                    return;
+                }
+            }
             UUID playerId = player.getUniqueId();
-            Entity damagedEntity = event.getEntity();
             if (plugin.getOnePunchPlayers().containsKey(playerId)) {
-                if(!(damagedEntity instanceof Player)) {
+                if(!(event.getEntity()instanceof Player) || !plugin.getOnePunchPlayers().containsKey(event.getEntity().getUniqueId())) {
+                    Entity damagedEntity = event.getEntity();
                     // Deal damage equal to one-shot (this could be set to a high value)
                     Vector direction = damagedEntity.getLocation().toVector().subtract(player.getLocation().toVector()).normalize();
                     // If one-punch mode is enabled, set damage to a high value
                     event.setDamage(9999);
+                    direction.multiply(5.0);
+                    direction.setY(1.5);
+                    damagedEntity.setVelocity(direction);
+                }
+                if (plugin.getOnePunchPlayers().containsKey(event.getEntity().getUniqueId())) {
+                    Entity damagedEntity = event.getEntity();
+                    // Apply velocity and knockback, but no damage if another player has this on.
+                    Vector direction = damagedEntity.getLocation().toVector().subtract(player.getLocation().toVector()).normalize();
                     direction.multiply(5.0);
                     direction.setY(1.5);
                     damagedEntity.setVelocity(direction);

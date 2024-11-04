@@ -9,13 +9,13 @@ commands:
     description: Smite a player with lightning.
     usage: /<command> <player>
   sit:
-    description: Sit somewhere, or on someone else's head.
-    usage: /<command> [player]
+    description: Sit somewhere, or on someone else's head, or make another player sit on another player's head.
+    usage: /<command> [player] [player]
   fling:
     description: Fling yourself or a player with varying levels of knockback.
     usage: /<command> [player] [knockback]
   onepunchman:
-    description: Become the hero you were born to be. Beat them with one punch.
+    description: Become the hero you were born to be.
     usage: /<command>
   catapult:
     description: Launch a giant projectile into the skies.
@@ -38,3 +38,9 @@ commands:
   babytrap:
     description: Toggle on/off to trap other players that hit you, or summon 10 baby zombies at target location.
     usage: /<command> [player]
+  rtp:
+    description: Teleports you to a random location.
+    usage: /<command>
+  back:
+    description: Returns you to your last saved location (via rtp).
+    usage: /<command>

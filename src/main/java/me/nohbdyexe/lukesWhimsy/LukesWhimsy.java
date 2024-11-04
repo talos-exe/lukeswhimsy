@@ -2,6 +2,7 @@ package me.nohbdyexe.lukesWhimsy;
 import me.nohbdyexe.lukesWhimsy.commands.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
@@ -9,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -18,6 +20,7 @@ public final class LukesWhimsy extends JavaPlugin implements @NotNull Listener {
     private HashMap<UUID, ArmorStand> sittingPlayers = new HashMap<>();
     private HashMap<UUID, Boolean> onePunchPlayers = new HashMap<>();
     private HashMap<UUID, Boolean> trappedPlayers = new HashMap<>();
+    private HashMap<UUID, Location> rtpLastLocation = new HashMap<>();
     private final String PLUGIN_PREFIX = ChatColor.BLUE + "[LukesWhimsy] " + ChatColor.RESET;
 
     @Override
@@ -36,6 +39,8 @@ public final class LukesWhimsy extends JavaPlugin implements @NotNull Listener {
         getCommand("whimsyhelp").setExecutor(new HelpCommand(this));
         getCommand("hng").setExecutor(new VillagerSoundCommand(this));
         getCommand("babytrap").setExecutor(new BabyTrapCommand(this));
+        getCommand("rtp").setExecutor(new RandomTeleportCommand(this));
+        getCommand("back").setExecutor(new BackRTPCommand(this));
     }
 
     @Override
@@ -64,6 +69,10 @@ public final class LukesWhimsy extends JavaPlugin implements @NotNull Listener {
 
     public HashMap<UUID, Boolean> getTrappedPlayers() {
         return trappedPlayers;
+    }
+
+    public HashMap<UUID, Location> getRtpLastLocation() {
+        return rtpLastLocation;
     }
 
     public String getPluginPrefix() {
