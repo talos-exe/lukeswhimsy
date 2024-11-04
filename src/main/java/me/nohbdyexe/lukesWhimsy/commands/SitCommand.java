@@ -62,11 +62,16 @@ public class SitCommand implements CommandExecutor, Listener{
                         return true; // Stop processing further
                     }
 
-                    targetPlayer.addPassenger(player);
-                    player.sendMessage(PLUGIN_PREFIX + "You are now sitting on " + targetPlayer.getName() +"'s head.");
-                    sittingPlayers.put(player.getUniqueId(), null);
+                    if (!sittingPlayers.containsKey(targetPlayer.getUniqueId())) {
+                        targetPlayer.addPassenger(player);
+                        player.sendMessage(PLUGIN_PREFIX + "You are now sitting on " + targetPlayer.getName() +"'s head.");
+                        sittingPlayers.put(player.getUniqueId(), null);
+                    } else {
+                        player.sendMessage(PLUGIN_PREFIX+"You cannot sit on top of a player that is already sitting.");
+                    }
                 } else {
                     player.sendMessage(PLUGIN_PREFIX + "Player not found.");
+                    return true;
                 }
             } else {
                 // Sit at the current location
@@ -83,6 +88,7 @@ public class SitCommand implements CommandExecutor, Listener{
 
                 sittingPlayers.put(player.getUniqueId(), stand);
                 player.sendMessage(PLUGIN_PREFIX + "You are now sitting.");
+                return true;
             }
             return true;
         }

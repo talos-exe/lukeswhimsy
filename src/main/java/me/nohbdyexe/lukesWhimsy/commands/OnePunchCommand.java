@@ -82,6 +82,11 @@ public class OnePunchCommand implements CommandExecutor, Listener {
             Player player = (Player) event.getEntity();
             UUID playerId = player.getUniqueId();
             if (plugin.getOnePunchPlayers().containsKey(playerId)) {
+                // Cancel fire tick damage
+                if (player.getFireTicks()>0) {
+                    player.setFireTicks(0);
+                }
+                // Cancel all damage
                 event.setCancelled(true);
             }
         }

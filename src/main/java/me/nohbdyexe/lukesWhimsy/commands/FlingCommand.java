@@ -36,45 +36,52 @@ public class FlingCommand implements CommandExecutor {
             Player player = (Player) sender;
             double knockbackStrength = DEFAULT_KNOCKBACK_STRENGTH; // Initialize with default
 
-            if (args.length > 0) {
+            if (args.length == 0) {
                 // Check if the first argument is a valid number
+                flingPlayer(player, DEFAULT_KNOCKBACK_STRENGTH);
+                player.sendMessage(PLUGIN_PREFIX + "You have flung yourself!");
+                return true;
+            }
+
+            // Handle one argument possibility
+            Player targetPlayer = Bukkit.getPlayer(args[0]);
+            if (args.length == 1) {
+                // Check if its a valid number
                 try {
                     knockbackStrength = Double.parseDouble(args[0]);
-                    if (knockbackStrength <= 0) {
-                        player.sendMessage(PLUGIN_PREFIX + "Knockback strength must be greater than 0.");
-                        return true;
+                    if (knockbackStrength > 0) {
+                        flingPlayer(player, knockbackStrength);
+                        player.sendMessage(PLUGIN_PREFIX+"You have flung yourself with a knockback of " +knockbackStrength + "!");
+                    } else {
+                        player.sendMessage(PLUGIN_PREFIX+"Knockback value must be greater than 0.");
                     }
                 } catch (NumberFormatException e) {
-                    // If it's not a number, check if it's a player name
-                    Player targetPlayer = Bukkit.getPlayer(args[0]);
                     if (targetPlayer != null && targetPlayer.isOnline()) {
-                        flingPlayer(targetPlayer, knockbackStrength);
-                        player.sendMessage(PLUGIN_PREFIX + "You have flung " + targetPlayer.getName() + " with a knockback strength of " + knockbackStrength + "!");
-                        return true;
+                        flingPlayer(targetPlayer, DEFAULT_KNOCKBACK_STRENGTH);
+                        player.sendMessage(PLUGIN_PREFIX+"You have flung " + targetPlayer.getName() + " with a knockback strength of 1.5!");
                     } else {
-                        player.sendMessage(PLUGIN_PREFIX + "Player not found or invalid knockback strength.");
-                        return true;
+                        player.sendMessage(PLUGIN_PREFIX+"Player not found.");
                     }
                 }
+                return true;
+            }
 
-                // If the knockback strength is valid, check for a second argument for target player
-                if (args.length > 1) {
-                    Player targetPlayer = Bukkit.getPlayer(args[1]);
-                    if (targetPlayer != null && targetPlayer.isOnline()) {
-                        flingPlayer(targetPlayer, knockbackStrength);
-                        player.sendMessage(PLUGIN_PREFIX + "You have flung " + targetPlayer.getName() + " with a knockback strength of " + knockbackStrength + "!");
+            if (args.length == 2) {
+                try {
+                    knockbackStrength = Double.parseDouble(args[1]);
+                    if (knockbackStrength > 0) {
+                        if (targetPlayer != null && targetPlayer.isOnline()) {
+                            flingPlayer(targetPlayer, knockbackStrength);
+                            player.sendMessage(PLUGIN_PREFIX+"You have flung " + targetPlayer.getName() + " with a knockback strength of " + knockbackStrength + "!");
+                        } else {
+                            player.sendMessage(PLUGIN_PREFIX+"Player not found.");
+                        }
                     } else {
-                        player.sendMessage(PLUGIN_PREFIX + "Player not found.");
+                        player.sendMessage(PLUGIN_PREFIX+"Knockback value must be greater than 0.");
                     }
-                } else {
-                    // Fling self if no target player provided
-                    flingPlayer(player, knockbackStrength);
-                    player.sendMessage(PLUGIN_PREFIX + "You have flung yourself with a knockback strength of " + knockbackStrength + "!");
+                } catch (NumberFormatException e) {
+                    player.sendMessage(PLUGIN_PREFIX+"Second argument must be a number.");
                 }
-            } else {
-                // Fling self with default knockback strength if no arguments
-                flingPlayer(player, DEFAULT_KNOCKBACK_STRENGTH);
-                player.sendMessage(PLUGIN_PREFIX + "You have flung yourself with a knockback strength of " + DEFAULT_KNOCKBACK_STRENGTH + "!");
             }
             return true;
         }

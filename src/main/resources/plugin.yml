@@ -1,5 +1,5 @@
 name: LukesWhimsy
-version: '1.1'
+version: '1.2'
 main: me.nohbdyexe.lukesWhimsy.LukesWhimsy
 author: nohbdy-exe
 website: https://github.com/nohbdy-exe/lukeswhimsy
@@ -21,13 +21,13 @@ commands:
     description: Launch a giant projectile into the skies.
     usage: /<command>
   heal:
-    description: Heal yourself or another player.
+    description: Heal yourself.
     usage: /<command>
   feed:
-    description: Feed yourself or another player to full satiation.
+    description: Feed yourself.
     usage: /<command>
   fly:
-    description: Enable flying mode for yourself or someone else.
+    description: Enable flying mode for yourself.
     usage: /<command>
   whimsyhelp:
     description: A list of all my whimsical commands.
@@ -35,3 +35,6 @@ commands:
   hng:
     description: Make a villager noise.
     usage: /<command>
+  babytrap:
+    description: Toggle on/off to trap other players that hit you, or summon 10 baby zombies at target location.
+    usage: /<command> [player]

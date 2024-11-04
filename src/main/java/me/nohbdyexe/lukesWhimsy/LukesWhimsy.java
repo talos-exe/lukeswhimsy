@@ -17,12 +17,13 @@ public final class LukesWhimsy extends JavaPlugin implements @NotNull Listener {
 
     private HashMap<UUID, ArmorStand> sittingPlayers = new HashMap<>();
     private HashMap<UUID, Boolean> onePunchPlayers = new HashMap<>();
+    private HashMap<UUID, Boolean> trappedPlayers = new HashMap<>();
     private final String PLUGIN_PREFIX = ChatColor.BLUE + "[LukesWhimsy] " + ChatColor.RESET;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
-        getLogger().info("[LukesWhimsy]ver 1.1 enabled.");
+        getLogger().info("[LukesWhimsy]ver 1.2 enabled.");
         getLogger().info("[LukesWhimsy] use /whimsyhelp to get started!");
         getCommand("smite").setExecutor(new SmiteCommand(this));
         getCommand("sit").setExecutor(new SitCommand(this));
@@ -34,13 +35,14 @@ public final class LukesWhimsy extends JavaPlugin implements @NotNull Listener {
         getCommand("fly").setExecutor(new FlyCommand(this));
         getCommand("whimsyhelp").setExecutor(new HelpCommand(this));
         getCommand("hng").setExecutor(new VillagerSoundCommand(this));
+        getCommand("babytrap").setExecutor(new BabyTrapCommand(this));
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        getLogger().info("[LukesWhimsy] ver 1.1 disabled.");
-        cleanupSittingPlayers();
+        getLogger().info("[LukesWhimsy] ver 1.2 disabled.");
+        cleanupAllHashes();
     }
 
     @Override
@@ -60,16 +62,23 @@ public final class LukesWhimsy extends JavaPlugin implements @NotNull Listener {
         return onePunchPlayers;
     }
 
+    public HashMap<UUID, Boolean> getTrappedPlayers() {
+        return trappedPlayers;
+    }
+
     public String getPluginPrefix() {
         return PLUGIN_PREFIX;
     }
 
-    private void cleanupSittingPlayers() {
+    private void cleanupAllHashes() {
         for (ArmorStand stand : sittingPlayers.values()) {
             stand.remove();
         }
         sittingPlayers.clear();
-        Bukkit.getLogger().info("Removed all sitting players' armor stands.");
+        trappedPlayers.clear();
+        onePunchPlayers.clear();
+        getLogger().info("[LukesWhimsy] Removed all sitting players' armor stands.");
+        getLogger().info ("[LukesWhimsy] Cleared all hashmaps.");
     }
 
 
