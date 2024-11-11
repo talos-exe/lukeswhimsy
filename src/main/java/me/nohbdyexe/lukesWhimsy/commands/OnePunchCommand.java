@@ -1,7 +1,7 @@
 package me.nohbdyexe.lukesWhimsy.commands;
 
+import me.nohbdyexe.lukesWhimsy.DataManager;
 import me.nohbdyexe.lukesWhimsy.LukesWhimsy;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -22,10 +22,12 @@ public class OnePunchCommand implements CommandExecutor, Listener {
 
     private String PLUGIN_PREFIX;
     private final LukesWhimsy plugin;
+    private final DataManager dataManager;
 
     public OnePunchCommand(LukesWhimsy plugin) {
         this.plugin = plugin;
-        this.PLUGIN_PREFIX = plugin.getPluginPrefix();
+        this.dataManager = new DataManager(plugin);
+        this.PLUGIN_PREFIX = dataManager.getPluginPrefix();
         plugin.getServer().getPluginManager().registerEvents(this,plugin);
     }
 
@@ -39,15 +41,15 @@ public class OnePunchCommand implements CommandExecutor, Listener {
 
             Player player = (Player) sender;
             UUID playerId = player.getUniqueId();
-            boolean isEnabled = plugin.getOnePunchPlayers().getOrDefault(playerId, false);
+            boolean isEnabled = dataManager.getOnePunchPlayers().getOrDefault(playerId, false);
 
             if (isEnabled) {
                 // Disable one-punch mode
-                plugin.getOnePunchPlayers().remove(playerId);
+                dataManager.getOnePunchPlayers().remove(playerId);
                 player.sendMessage(PLUGIN_PREFIX+"One-punch mode disabled.");
             } else {
                 // Enable one-punch mode
-                plugin.getOnePunchPlayers().put(playerId, true);
+                dataManager.getOnePunchPlayers().put(playerId, true);
                 player.sendMessage(PLUGIN_PREFIX+"One-punch mode enabled. You are now invincible.");
             }
 
@@ -72,8 +74,8 @@ public class OnePunchCommand implements CommandExecutor, Listener {
                 }
             }
             UUID playerId = player.getUniqueId();
-            if (plugin.getOnePunchPlayers().containsKey(playerId)) {
-                if(!(event.getEntity()instanceof Player) || !plugin.getOnePunchPlayers().containsKey(event.getEntity().getUniqueId())) {
+            if (dataManager.getOnePunchPlayers().containsKey(playerId)) {
+                if(!(event.getEntity()instanceof Player) || !dataManager.getOnePunchPlayers().containsKey(event.getEntity().getUniqueId())) {
                     Entity damagedEntity = event.getEntity();
                     // Deal damage equal to one-shot (this could be set to a high value)
                     Vector direction = damagedEntity.getLocation().toVector().subtract(player.getLocation().toVector()).normalize();
@@ -83,7 +85,7 @@ public class OnePunchCommand implements CommandExecutor, Listener {
                     direction.setY(1.5);
                     damagedEntity.setVelocity(direction);
                 }
-                if (plugin.getOnePunchPlayers().containsKey(event.getEntity().getUniqueId())) {
+                if (dataManager.getOnePunchPlayers().containsKey(event.getEntity().getUniqueId())) {
                     Entity damagedEntity = event.getEntity();
                     // Apply velocity and knockback, but no damage if another player has this on.
                     Vector direction = damagedEntity.getLocation().toVector().subtract(player.getLocation().toVector()).normalize();
@@ -101,7 +103,7 @@ public class OnePunchCommand implements CommandExecutor, Listener {
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
             UUID playerId = player.getUniqueId();
-            if (plugin.getOnePunchPlayers().containsKey(playerId)) {
+            if (dataManager.getOnePunchPlayers().containsKey(playerId)) {
                 // Cancel fire tick damage
                 if (player.getFireTicks()>0) {
                     player.setFireTicks(0);
@@ -117,7 +119,7 @@ public class OnePunchCommand implements CommandExecutor, Listener {
         if (event.getEntityType() == EntityType.PLAYER) {
             Player player = (Player) event.getEntity();
             UUID playerId = player.getUniqueId();
-            if (plugin.getOnePunchPlayers().containsKey(playerId)) {
+            if (dataManager.getOnePunchPlayers().containsKey(playerId)) {
                 // Cancel the event to prevent hunger loss
                 event.setCancelled(true);
                 player.setFoodLevel(20); // Ensure food level stays at maximum

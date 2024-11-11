@@ -1,5 +1,6 @@
 package me.nohbdyexe.lukesWhimsy.commands;
 
+import me.nohbdyexe.lukesWhimsy.DataManager;
 import me.nohbdyexe.lukesWhimsy.LukesWhimsy;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,14 +20,16 @@ import java.util.UUID;
 
 public class SitCommand implements CommandExecutor, Listener {
 
-    private HashMap<UUID, ArmorStand> sittingPlayers = new HashMap<>();
+    private HashMap<UUID, ArmorStand> sittingPlayers;
     private HashSet<UUID> sittingOnPlayer = new HashSet<>();
     private String PLUGIN_PREFIX;
     private static final double SIT_RADIUS = 5.0; // Maximum distance to sit on another player.
+    private final DataManager dataManager;
 
     public SitCommand(LukesWhimsy plugin) {
-        this.sittingPlayers = plugin.getSittingPlayers();
-        this.PLUGIN_PREFIX = plugin.getPluginPrefix();
+        this.dataManager = new DataManager(plugin);
+        this.sittingPlayers = dataManager.getSittingPlayers();
+        this.PLUGIN_PREFIX = dataManager.getPluginPrefix();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 

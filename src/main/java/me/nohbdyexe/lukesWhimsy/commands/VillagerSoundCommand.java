@@ -1,5 +1,6 @@
 package me.nohbdyexe.lukesWhimsy.commands;
 
+import me.nohbdyexe.lukesWhimsy.DataManager;
 import me.nohbdyexe.lukesWhimsy.LukesWhimsy;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -8,14 +9,17 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+
 public class VillagerSoundCommand implements CommandExecutor {
 
     private final LukesWhimsy plugin;
     private String PLUGIN_PREFIX;
+    private final DataManager dataManager;
 
     public VillagerSoundCommand(LukesWhimsy plugin) {
         this.plugin = plugin;
-        this.PLUGIN_PREFIX = plugin.getPluginPrefix();
+        this.dataManager = new DataManager(plugin);
+        this.PLUGIN_PREFIX = dataManager.getPluginPrefix();
     }
 
     @Override

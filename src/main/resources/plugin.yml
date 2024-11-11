@@ -1,5 +1,5 @@
 name: LukesWhimsy
-version: '1.2'
+version: '1.3'
 main: me.nohbdyexe.lukesWhimsy.LukesWhimsy
 author: nohbdy-exe
 website: https://github.com/nohbdy-exe/lukeswhimsy
@@ -8,39 +8,71 @@ commands:
   smite:
     description: Smite a player with lightning.
     usage: /<command> <player>
+    permission: lukeswhimsy.smite
   sit:
     description: Sit somewhere, or on someone else's head, or make another player sit on another player's head.
     usage: /<command> [player] [player]
+    permission: lukeswhimsy.sit
   fling:
     description: Fling yourself or a player with varying levels of knockback.
     usage: /<command> [player] [knockback]
+    permission: lukeswhimsy.fling
   onepunchman:
     description: Become the hero you were born to be.
     usage: /<command>
+    permission: lukeswhimsy.onepunchman
   catapult:
     description: Launch a giant projectile into the skies.
     usage: /<command>
+    permission: lukeswhimsy.catapult
   heal:
-    description: Heal yourself.
-    usage: /<command>
+    description: Heal yourself or another player.
+    usage: /<command> [player]
+    aliases: hp
+    permission: lukeswhimsy.heal
   feed:
-    description: Feed yourself.
-    usage: /<command>
+    description: Feed yourself or another player.
+    usage: /<command> [player]
+    aliases: eat
+    permission: lukeswhimsy.feed
   fly:
     description: Enable flying mode for yourself.
     usage: /<command>
-  whimsyhelp:
+    permission: lukeswhimsy.fly
+  lwhelp:
     description: A list of all my whimsical commands.
     usage: /<command>
+    permission: lukeswhimsy.help
   hng:
     description: Make a villager noise.
-    usage: /<command>
+    usage: /<command>\
+    permission: lukeswhimsy.hng
   babytrap:
     description: Toggle on/off to trap other players that hit you, or summon 10 baby zombies at target location.
     usage: /<command> [player]
+    permission: lukeswhimsy.babytrap
   rtp:
     description: Teleports you to a random location.
     usage: /<command>
+    aliases: [randomtp, tprandom]
+    permission: lukeswhimsy.rtp
   back:
-    description: Returns you to your last saved location (via rtp).
+    description: Returns you to your last saved location.
     usage: /<command>
+    permission: lukeswhimsy.back
+  top:
+    description: Teleport to the surface.
+    usage: /<command>
+    permission: lukeswhimsy.top
+  freeze:
+    description: Freezes a player.
+    usage: /<command>
+    permission: lukeswhimsy.freeze
+  loudmouth:
+    description: Mimic a player.
+    usage: /<command> [player] [message]
+    permission: lukeswhimsy.loudmouth
+  home:
+    description: Main command for managing homes
+    usage: /home <create|delete|listall|<homename>>
+    permission: lukeswhimsy.home

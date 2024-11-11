@@ -1,5 +1,6 @@
 package me.nohbdyexe.lukesWhimsy.commands;
 
+import me.nohbdyexe.lukesWhimsy.DataManager;
 import me.nohbdyexe.lukesWhimsy.LukesWhimsy;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,7 +15,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class BabyTrapCommand implements CommandExecutor, Listener {
@@ -22,11 +22,13 @@ public class BabyTrapCommand implements CommandExecutor, Listener {
     private final LukesWhimsy plugin;
     private String PLUGIN_PREFIX;
     private HashMap<UUID, Boolean> activeTraps;
+    private final DataManager dataManager;
 
     public BabyTrapCommand(LukesWhimsy plugin) {
         this.plugin = plugin;
-        this.PLUGIN_PREFIX = plugin.getPluginPrefix();
-        this.activeTraps = plugin.getTrappedPlayers();
+        this.dataManager = new DataManager(plugin);
+        this.PLUGIN_PREFIX = dataManager.getPluginPrefix();
+        this.activeTraps = dataManager.getTrappedPlayers();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 

@@ -1,5 +1,6 @@
 package me.nohbdyexe.lukesWhimsy.commands;
 
+import me.nohbdyexe.lukesWhimsy.DataManager;
 import me.nohbdyexe.lukesWhimsy.LukesWhimsy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -14,9 +15,11 @@ public class FlingCommand implements CommandExecutor {
 
     private final double DEFAULT_KNOCKBACK_STRENGTH = 1.5;
     private String PLUGIN_PREFIX;
+    private final DataManager dataManager;
 
     public FlingCommand(LukesWhimsy plugin) {
-        this.PLUGIN_PREFIX = plugin.getPluginPrefix();
+        this.dataManager = new DataManager(plugin);
+        this.PLUGIN_PREFIX = dataManager.getPluginPrefix();
     }
 
     @Override

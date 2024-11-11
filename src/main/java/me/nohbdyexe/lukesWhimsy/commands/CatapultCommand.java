@@ -1,4 +1,5 @@
 package me.nohbdyexe.lukesWhimsy.commands;
+import me.nohbdyexe.lukesWhimsy.DataManager;
 import me.nohbdyexe.lukesWhimsy.LukesWhimsy;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -21,10 +22,12 @@ public class CatapultCommand implements CommandExecutor, Listener {
     private final LukesWhimsy plugin;
     private String PLUGIN_PREFIX;
     private final HashMap<UUID, CatapultData> catapultDataMap;
+    private final DataManager dataManager;
 
     public CatapultCommand(LukesWhimsy plugin) {
         this.plugin = plugin;
-        this.PLUGIN_PREFIX = plugin.getPluginPrefix();
+        this.dataManager = new DataManager(plugin);
+        this.PLUGIN_PREFIX = dataManager.getPluginPrefix();
         this.catapultDataMap = new HashMap<>();
         plugin.getServer().getPluginManager().registerEvents(this,plugin);
     }

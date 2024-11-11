@@ -1,4 +1,5 @@
 package me.nohbdyexe.lukesWhimsy.commands;
+import me.nohbdyexe.lukesWhimsy.DataManager;
 import me.nohbdyexe.lukesWhimsy.LukesWhimsy;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -13,18 +14,19 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 public class RandomTeleportCommand implements CommandExecutor {
 
     private final LukesWhimsy plugin;
     private String PLUGIN_PREFIX;
     private final HashMap<UUID, Location> lastLocations;
+    private final DataManager dataManager;
 
     public RandomTeleportCommand(LukesWhimsy plugin) {
         this.plugin = plugin;
-        this.lastLocations = plugin.getRtpLastLocation();
-        this.PLUGIN_PREFIX = plugin.getPluginPrefix();
+        this.dataManager = new DataManager(plugin);
+        this.lastLocations = dataManager.getRtpLastLocation();
+        this.PLUGIN_PREFIX = dataManager.getPluginPrefix();
     }
 
     @Override
@@ -36,9 +38,9 @@ public class RandomTeleportCommand implements CommandExecutor {
         Player player = (Player) sender;
 
         // Debugging to remove map if player is already found.
-        if (lastLocations.containsKey(player.getUniqueId())) {
-            lastLocations.remove(player.getUniqueId());
-        }
+//        if (lastLocations.containsKey(player.getUniqueId())) {
+//            lastLocations.remove(player.getUniqueId());
+//        }
 
         // Initialize initial location
         Location initialLocation = player.getLocation();
@@ -62,7 +64,7 @@ public class RandomTeleportCommand implements CommandExecutor {
                     countdown--;
                     Bukkit.getScheduler().runTaskLater(plugin, this, 20);
                 } else {
-                    teleportPlayer(player);
+                    teleportPlayerAsync(player);
                 }
             }
         }, 20); // Start the countdown after 20 ticks ( 1 second )
@@ -70,60 +72,79 @@ public class RandomTeleportCommand implements CommandExecutor {
         return true;
     }
 
-    private void teleportPlayer(Player player) {
-        // Get the world border size
-        int borderSize = (int) player.getWorld().getWorldBorder().getSize() / 2;
-        // Generate random coordinates within the world border
-        Random random = new Random();
-        // Create a new location
-        Location randomLocation = null;
+    private void teleportPlayerAsync(Player player) {
+        // Run the teleport process asynchronously as to not lag the server.
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                // Get the world border size
+                int borderSize = (int) player.getWorld().getWorldBorder().getSize() / 2;
+                // Generate random coordinates within the world border
+                Random random = new Random();
+                Location randomLocation = null;
 
-        // Attempts to find safe locations
-        for (int attempts = 0; attempts < 10; attempts++) {
-            int x = random.nextInt(borderSize * 2) - borderSize; // Get a random X coordinate
-            int z = random.nextInt(borderSize * 2) - borderSize; // Get a random Z coordinate
-            int y = player.getWorld().getHighestBlockYAt(x, z); // Get the highest Y value for the new location.
+                // Attempts to find safe locations asynchronously
+                for (int attempts = 0; attempts < 10; attempts++) {
+                    int x = random.nextInt(borderSize * 2) - borderSize; // Get a random X coordinate
+                    int z = random.nextInt(borderSize * 2) - borderSize; // Get a random Z coordinate
+                    int y = player.getWorld().getHighestBlockYAt(x, z); // Get the highest Y value for the new location.
 
-            // Check if location is safe.
-            randomLocation = new Location(player.getWorld(), x, y, z);
-            Block block = randomLocation.getBlock();
+                    // Check if location is safe.
+                    randomLocation = new Location(player.getWorld(), x, y, z);
+                    Block block = randomLocation.getBlock();
 
-            //Make sure we're not on water, lava, solid ground.
-            if (block.getType().isSolid() && block.getType() != Material.WATER && block.getType() != Material.LAVA) {
-                //Check for air block
-                if (block.getRelative(0, 1, 0).getType() == Material.AIR) {
-                    // Check if surrounding area is clear.
-                    if (isAreaClear(randomLocation)) {
-                        break; // Found safe location.
+                    // Make sure we're not on water, lava, or solid ground.
+                    if (block.getType().isSolid() && block.getType() != Material.WATER && block.getType() != Material.LAVA) {
+                        // Check for air block above
+                        if (block.getRelative(0, 1, 0).getType() == Material.AIR) {
+                            // Check if surrounding area is clear
+                            if (isAreaClear(randomLocation)) {
+                                break; // Found safe location
+                            }
+                        }
                     }
                 }
+
+                if (randomLocation == null) {
+                    // Wasn't able to find a safe location within 10 attempts
+                    player.sendMessage(PLUGIN_PREFIX + "Could not find a safe location to rtp to within 10 tries.");
+                    return;
+                }
+
+                // Preload the chunk where the player will be teleported asynchronously
+                final Chunk chunk = randomLocation.getChunk();
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    player.getWorld().loadChunk(chunk);
+                    // Load surrounding chunks synchronously
+                    for (int dx = -1; dx <= 1; dx++) {
+                        for (int dz = -1; dz <= 1; dz++) {
+                            final int offsetX = chunk.getX() + dx;
+                            final int offsetZ = chunk.getZ() + dz;
+                            Bukkit.getScheduler().runTask(plugin, () -> {
+                                player.getWorld().loadChunk(offsetX, offsetZ);
+                            });
+                        }
+                    }
+                });
+
+                // Teleport the player to the random location (synchronous)
+                Location finalRandomLocation = randomLocation;
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    player.teleport(finalRandomLocation);
+                    player.sendMessage(PLUGIN_PREFIX + "You have teleported to location: " + finalRandomLocation.getX() + ", " + finalRandomLocation.getY() + ", " + finalRandomLocation.getZ());
+                });
             }
-        }
-
-        if (randomLocation == null) {
-            //Wasn't able to find a safe location within 10 attempts.
-            player.sendMessage(PLUGIN_PREFIX + "Could not find a safe location to rtp to within 10 tries.");
-            return;
-        }
-
-        // Preload the chunk where the player will be teleported
-        Chunk chunk = randomLocation.getChunk();
-        player.getWorld().loadChunk(chunk);
-
-        // Load surrounding chunks
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                player.getWorld().loadChunk(chunk.getX() + dx, chunk.getZ() + dz);
-            }
-        }
-
-        // Teleport the player
-        player.teleport(randomLocation);
-        player.sendMessage(PLUGIN_PREFIX + "You have teleported to location: " + randomLocation.getX() + ", " + randomLocation.getY() + ", " + randomLocation.getZ());
-
+        });
     }
 
     private boolean isAreaClear(Location location) {
+
+        //Check if player is not underwater
+        if (!isNotUnderwater(location)) {
+            return false;
+        }
+
+
         // Check the blocks around the player.
         for (int x = -1; x <= 1; x++) {
             for (int y = 0; y <= 2; y++) { // Check the block the player is standing on and the two above.
@@ -136,6 +157,24 @@ public class RandomTeleportCommand implements CommandExecutor {
             }
         }
         return true; // Block found, area clear.
+    }
+
+    private boolean isNotUnderwater(Location location) {
+        int r = 1;
+        int waterLevel = location.getBlockY();
+
+        // Check blocks around player.
+        for (int y = waterLevel - 1; y < waterLevel + 1; y++) {
+            for (int x = -r; x<= r; x++) {
+                for (int z = -r; z <= r; z++) {
+                    Block block = location.getWorld().getBlockAt(location.getBlockX()+x, y, location.getBlockZ()+z);
+                    if (block.getType() == Material.WATER) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
 }
