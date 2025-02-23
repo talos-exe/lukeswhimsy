@@ -12,6 +12,7 @@ A minecraft plugin geared towards whimsical fun.
 /hng - make a villager sound.<br>
 /babytrap <player> - toggle babytrap on/off to summon baby zombies when hit. Or just simply summon them on a player. Default zombie value: 3<br>
 /freeze <player> - freeze a player.<br>
+/smite <player> Smites a player with lightning.
 
 ## In development commands:
 /rtp - randomly teleport anywhere within the world border.<br>
@@ -19,6 +20,9 @@ A minecraft plugin geared towards whimsical fun.
 /top - teleports you to the surface.<br>
 /loudmouth <player> - make a player say what you want them to say.<br>
 /home
+
+General permissions for commands.
+Refining help page. Changed /whimsyhelp to /lwhelp.
 
 ## Note: 
 I am working on this plugin in my freetime, so it's definitely not refined, this was just made for fun. Thanks for checking it out.
