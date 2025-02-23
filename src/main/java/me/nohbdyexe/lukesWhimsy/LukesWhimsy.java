@@ -18,8 +18,8 @@ public final class LukesWhimsy extends JavaPlugin implements @NotNull Listener {
     @Override
     public void onEnable() {
         // Plugin startup logic
-        getLogger().info("ver 1.3 enabled.");
-        getLogger().info("use /whimsyhelp to get started!");
+        getLogger().info("ver 1.4.2 enabled.");
+        getLogger().info("use /lwhelp to get started!");
 
         // Create manager objects
         dataManager = new DataManager(this);
@@ -42,7 +42,7 @@ public final class LukesWhimsy extends JavaPlugin implements @NotNull Listener {
         getCommand("top").setExecutor(new TopCommand(this));
         getCommand("freeze").setExecutor(new FreezeCommand(this));
         getCommand("loudmouth").setExecutor(new LoudmouthCommand(this));
-        getCommand("home").setExecutor(new HomeCommand(this));
+        //getCommand("home").setExecutor(new HomeCommand(this));
 
         // Load data from file
         homeDataManager.loadHomes();
@@ -52,7 +52,7 @@ public final class LukesWhimsy extends JavaPlugin implements @NotNull Listener {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        getLogger().info("ver 1.3 disabled.");
+        getLogger().info("ver 1.4.2 disabled.");
         cleanupAllHashes();
         homeDataManager.saveHomes();
     }

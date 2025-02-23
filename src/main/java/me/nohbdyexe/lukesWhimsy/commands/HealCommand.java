@@ -33,14 +33,14 @@ public class HealCommand implements CommandExecutor {
                 Player player = (Player) sender;
 
                 if (args.length == 0) {
-                    player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+                    player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
                     sender.sendMessage(PLUGIN_PREFIX+"You have healed yourself.");
                     return true;
                 }
                 else if (args.length == 1) {
                     Player targetPlayer = Bukkit.getPlayer(args[0]);
                     if(targetPlayer != null && targetPlayer.isOnline()) {
-                        targetPlayer.setHealth(targetPlayer.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+                        targetPlayer.setHealth(targetPlayer.getAttribute(Attribute.MAX_HEALTH).getValue());
                         sender.sendMessage(PLUGIN_PREFIX+"You have healed " + targetPlayer.getName());
                     } else {
                         sender.sendMessage(PLUGIN_PREFIX+"Player not found.");
@@ -54,7 +54,7 @@ public class HealCommand implements CommandExecutor {
                 if (args.length == 1) {
                     Player targetPlayer = Bukkit.getPlayer(args[0]);
                     if (targetPlayer != null && targetPlayer.isOnline()) {
-                        targetPlayer.setHealth(targetPlayer.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+                        targetPlayer.setHealth(targetPlayer.getAttribute(Attribute.MAX_HEALTH).getValue());
                         sender.sendMessage(PLUGIN_PREFIX + "Healed " + targetPlayer.getName());
                     } else {
                         sender.sendMessage(PLUGIN_PREFIX + "Player not found.");

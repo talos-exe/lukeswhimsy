@@ -1,5 +1,5 @@
 name: LukesWhimsy
-version: '1.3'
+version: '1.4.2'
 main: me.nohbdyexe.lukesWhimsy.LukesWhimsy
 author: nohbdy-exe
 website: https://github.com/nohbdy-exe/lukeswhimsy
@@ -72,7 +72,22 @@ commands:
     description: Mimic a player.
     usage: /<command> [player] [message]
     permission: lukeswhimsy.loudmouth
-  home:
-    description: Main command for managing homes
-    usage: /home <create|delete|listall|<homename>>
-    permission: lukeswhimsy.home
+#  home:
+#    description: Main command for managing homes
+#    usage: /home <create|delete|listall|<homename>>
+#    permission: lukeswhimsy.home
+permissions:
+  lukeswhimsy.sit:
+    default: true
+  lukeswhimsy.hng:
+    default: true
+  lukeswhimsy.help:
+    default: true
+  lukeswhimsy.rtp:
+    default: true
+  lukeswhimsy.top:
+    default: true
+  lukeswhimsy.fly:
+    default: true
+  lukeswhimsy.back:
+    default: true
