@@ -13,7 +13,6 @@ public class HelpCommand implements CommandExecutor {
 
     public HelpCommand(LukesWhimsy plugin) {
         //private final List<String> helpCommands;
-        DataManager dataManager = new DataManager(plugin);
         //helpCommands.add("")
     }
 

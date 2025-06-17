@@ -13,12 +13,10 @@ import java.util.Random;
 
 public class FlingCommand implements CommandExecutor {
 
-    private final double DEFAULT_KNOCKBACK_STRENGTH = 1.5;
-    private String PLUGIN_PREFIX;
-    private final DataManager dataManager;
+    private final String PLUGIN_PREFIX;
 
     public FlingCommand(LukesWhimsy plugin) {
-        this.dataManager = new DataManager(plugin);
+        DataManager dataManager = new DataManager(plugin);
         this.PLUGIN_PREFIX = dataManager.getPluginPrefix();
     }
 
@@ -31,12 +29,12 @@ public class FlingCommand implements CommandExecutor {
         //
         ///////////////
         if (command.getName().equalsIgnoreCase("fling")) {
-            if (!(sender instanceof Player) || !sender.isOp()) {
+            if (!(sender instanceof Player player) || !sender.isOp()) {
                 sender.sendMessage(PLUGIN_PREFIX + "You must be an operator to use this command!");
                 return true;
             }
 
-            Player player = (Player) sender;
+            double DEFAULT_KNOCKBACK_STRENGTH = 1.5;
             double knockbackStrength = DEFAULT_KNOCKBACK_STRENGTH; // Initialize with default
 
             if (args.length == 0) {

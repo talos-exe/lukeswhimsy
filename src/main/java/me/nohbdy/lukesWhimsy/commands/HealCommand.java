@@ -10,14 +10,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Objects;
+
 public class HealCommand implements CommandExecutor {
-    private final LukesWhimsy plugin;
-    private String PLUGIN_PREFIX;
-    private final DataManager dataManager;
+    private final String PLUGIN_PREFIX;
 
     public HealCommand(LukesWhimsy plugin) {
-        this.plugin = plugin;
-        this.dataManager = new DataManager(plugin);
+        DataManager dataManager = new DataManager(plugin);
         this.PLUGIN_PREFIX = dataManager.getPluginPrefix();
     }
 
@@ -29,18 +28,17 @@ public class HealCommand implements CommandExecutor {
                 return true;
             }
 
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
+            if (sender instanceof Player player) {
 
                 if (args.length == 0) {
-                    player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
+                    player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue());
                     sender.sendMessage(PLUGIN_PREFIX+"You have healed yourself.");
                     return true;
                 }
                 else if (args.length == 1) {
                     Player targetPlayer = Bukkit.getPlayer(args[0]);
                     if(targetPlayer != null && targetPlayer.isOnline()) {
-                        targetPlayer.setHealth(targetPlayer.getAttribute(Attribute.MAX_HEALTH).getValue());
+                        targetPlayer.setHealth(Objects.requireNonNull(targetPlayer.getAttribute(Attribute.MAX_HEALTH)).getValue());
                         sender.sendMessage(PLUGIN_PREFIX+"You have healed " + targetPlayer.getName());
                     } else {
                         sender.sendMessage(PLUGIN_PREFIX+"Player not found.");
@@ -54,7 +52,7 @@ public class HealCommand implements CommandExecutor {
                 if (args.length == 1) {
                     Player targetPlayer = Bukkit.getPlayer(args[0]);
                     if (targetPlayer != null && targetPlayer.isOnline()) {
-                        targetPlayer.setHealth(targetPlayer.getAttribute(Attribute.MAX_HEALTH).getValue());
+                        targetPlayer.setHealth(Objects.requireNonNull(targetPlayer.getAttribute(Attribute.MAX_HEALTH)).getValue());
                         sender.sendMessage(PLUGIN_PREFIX + "Healed " + targetPlayer.getName());
                     } else {
                         sender.sendMessage(PLUGIN_PREFIX + "Player not found.");

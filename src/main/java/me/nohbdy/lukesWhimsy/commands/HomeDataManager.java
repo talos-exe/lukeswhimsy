@@ -10,22 +10,18 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class HomeDataManager{
 
     private final LukesWhimsy plugin;
     private final HashMap<UUID, Map<String, Location>> homeLocations;
-    private final DataManager dataManager;
     private File homesFile;
     private FileConfiguration config;
 
     public HomeDataManager(LukesWhimsy plugin) {
         this.plugin = plugin;
-        this.dataManager = new DataManager(plugin);
+        DataManager dataManager = new DataManager(plugin);
         this.homeLocations = dataManager.getHomesLocations();
     }
 
@@ -46,12 +42,12 @@ public class HomeDataManager{
             saveHomes(); // Save the file with the "homes" section
         }
 
-            for (String uuidStr : config.getConfigurationSection("homes").getKeys(false)) {
+            for (String uuidStr : Objects.requireNonNull(config.getConfigurationSection("homes")).getKeys(false)) {
                 UUID uuid = UUID.fromString(uuidStr);
                 Map<String,Location> playerHomes = new HashMap<>();
 
                 // Loop through the homes of each player
-                for (String homeName : config.getConfigurationSection("homes." + uuidStr).getKeys(false)) {
+                for (String homeName : Objects.requireNonNull(config.getConfigurationSection("homes." + uuidStr)).getKeys(false)) {
                     double x = config.getDouble("homes." + uuidStr + "." + homeName + ".x");
                     double y = config.getDouble("homes." + uuidStr + "." + homeName + ".y");
                     double z = config.getDouble("homes." + uuidStr + "." + homeName + ".z");
@@ -59,6 +55,7 @@ public class HomeDataManager{
                     float pitch = (float) config.getDouble("homes." + uuidStr + "." + homeName + ".pitch");
                     String worldName = config.getString("homes." + uuidStr + "." + homeName + ".world");
 
+                    assert worldName != null;
                     Location homeLocation = new Location(Bukkit.getWorld(worldName), x, y, z, yaw, pitch);
                     playerHomes.put(homeName, homeLocation);
                 }
@@ -80,11 +77,11 @@ public class HomeDataManager{
                 Location location = homeEntry.getValue();
 
                 config.set("homes." + uuid.toString() + "." + homeName + ".x", location.getX());
-                config.set("homes." + uuid.toString() + "." + homeName + ".y", location.getY());
-                config.set("homes." + uuid.toString() + "." + homeName + ".z", location.getZ());
-                config.set("homes." + uuid.toString() + "." + homeName + ".yaw", location.getYaw());
-                config.set("homes." + uuid.toString() + "." + homeName + ".pitch", location.getPitch());
-                config.set("homes." + uuid.toString() + "." + homeName + ".world", location.getWorld().getName());
+                config.set("homes." + uuid + "." + homeName + ".y", location.getY());
+                config.set("homes." + uuid + "." + homeName + ".z", location.getZ());
+                config.set("homes." + uuid + "." + homeName + ".yaw", location.getYaw());
+                config.set("homes." + uuid + "." + homeName + ".pitch", location.getPitch());
+                config.set("homes." + uuid + "." + homeName + ".world", location.getWorld().getName());
             }
         }
 

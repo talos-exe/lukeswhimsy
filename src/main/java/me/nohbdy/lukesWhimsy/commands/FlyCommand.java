@@ -11,13 +11,10 @@ import org.bukkit.entity.Player;
 
 public class FlyCommand implements CommandExecutor {
 
-    private final LukesWhimsy plugin;
-    private String PLUGIN_PREFIX;
-    private final DataManager dataManager;
+    private final String PLUGIN_PREFIX;
 
     public FlyCommand(LukesWhimsy plugin) {
-        this.plugin = plugin;
-        this.dataManager = new DataManager(plugin);
+        DataManager dataManager = new DataManager(plugin);
         this.PLUGIN_PREFIX = dataManager.getPluginPrefix();
     }
 
@@ -29,8 +26,7 @@ public class FlyCommand implements CommandExecutor {
                 return true;
             }
 
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
+            if (sender instanceof Player player) {
 
                 if (args.length == 0) {
                     toggleFlight(player);

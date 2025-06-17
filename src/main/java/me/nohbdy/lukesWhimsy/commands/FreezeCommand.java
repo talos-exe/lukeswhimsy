@@ -18,14 +18,11 @@ import java.util.UUID;
 
 public class FreezeCommand implements CommandExecutor, Listener {
 
-    private final LukesWhimsy plugin;
-    private final DataManager dataManager;
     private final String PLUGIN_PREFIX;
     private final HashMap<UUID, Boolean> frozenPlayers; // To store frozen states
 
     public FreezeCommand(LukesWhimsy plugin) {
-        this.plugin = plugin;
-        this.dataManager = new DataManager(plugin);
+        DataManager dataManager = new DataManager(plugin);
         this.PLUGIN_PREFIX = dataManager.getPluginPrefix();
         this.frozenPlayers = dataManager.getFrozenPlayers();
         plugin.getServer().getPluginManager().registerEvents(this,plugin);
@@ -39,8 +36,7 @@ public class FreezeCommand implements CommandExecutor, Listener {
             return true;
         }
 
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+        if (sender instanceof Player player) {
 
             if (args.length == 0) {
                 player.sendMessage(PLUGIN_PREFIX + "You must specify a player.");

@@ -12,24 +12,20 @@ import org.bukkit.entity.Player;
 
 public class VillagerSoundCommand implements CommandExecutor {
 
-    private final LukesWhimsy plugin;
-    private String PLUGIN_PREFIX;
-    private final DataManager dataManager;
+    private final String PLUGIN_PREFIX;
 
     public VillagerSoundCommand(LukesWhimsy plugin) {
-        this.plugin = plugin;
-        this.dataManager = new DataManager(plugin);
+        DataManager dataManager = new DataManager(plugin);
         this.PLUGIN_PREFIX = dataManager.getPluginPrefix();
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage(PLUGIN_PREFIX + "Only players can use this command.");
             return true;
         }
 
-        Player player = (Player) sender;
         Location location = player.getLocation(); // Get the player's location
 
         // Play the villager noise at the player's location

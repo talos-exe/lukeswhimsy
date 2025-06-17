@@ -19,14 +19,11 @@ import java.util.UUID;
 
 public class BabyTrapCommand implements CommandExecutor, Listener {
 
-    private final LukesWhimsy plugin;
-    private String PLUGIN_PREFIX;
-    private HashMap<UUID, Boolean> activeTraps;
-    private final DataManager dataManager;
+    private final String PLUGIN_PREFIX;
+    private final HashMap<UUID, Boolean> activeTraps;
 
     public BabyTrapCommand(LukesWhimsy plugin) {
-        this.plugin = plugin;
-        this.dataManager = new DataManager(plugin);
+        DataManager dataManager = new DataManager(plugin);
         this.PLUGIN_PREFIX = dataManager.getPluginPrefix();
         this.activeTraps = dataManager.getTrappedPlayers();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -35,11 +32,10 @@ public class BabyTrapCommand implements CommandExecutor, Listener {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase("babytrap")) {
-            if (!(sender instanceof Player) || !sender.isOp()) {
+            if (!(sender instanceof Player player) || !sender.isOp()) {
                 sender.sendMessage(PLUGIN_PREFIX + "You must be an operator to use this command!");
                 return true;
             }
-            Player player = (Player) sender;
             UUID playerId = player.getUniqueId();
             boolean isActive = activeTraps.getOrDefault(playerId, false);
 
@@ -66,8 +62,7 @@ public class BabyTrapCommand implements CommandExecutor, Listener {
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player) {
-            Player attacker = (Player) event.getDamager();
+        if (event.getDamager() instanceof Player attacker) {
             Player victim = (Player) event.getEntity();
             UUID attackerId = attacker.getUniqueId();
             UUID victimId = victim.getUniqueId();

@@ -18,24 +18,22 @@ import java.util.UUID;
 public class RandomTeleportCommand implements CommandExecutor {
 
     private final LukesWhimsy plugin;
-    private String PLUGIN_PREFIX;
+    private final String PLUGIN_PREFIX;
     private final HashMap<UUID, Location> lastLocations;
-    private final DataManager dataManager;
 
     public RandomTeleportCommand(LukesWhimsy plugin) {
         this.plugin = plugin;
-        this.dataManager = new DataManager(plugin);
+        DataManager dataManager = new DataManager(plugin);
         this.lastLocations = dataManager.getRtpLastLocation();
         this.PLUGIN_PREFIX = dataManager.getPluginPrefix();
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage(PLUGIN_PREFIX+"You must be a player to use that command.");
             return true;
         }
-        Player player = (Player) sender;
 
         // Debugging to remove map if player is already found.
 //        if (lastLocations.containsKey(player.getUniqueId())) {
@@ -103,12 +101,6 @@ public class RandomTeleportCommand implements CommandExecutor {
                             }
                         }
                     }
-                }
-
-                if (randomLocation == null) {
-                    // Wasn't able to find a safe location within 10 attempts
-                    player.sendMessage(PLUGIN_PREFIX + "Could not find a safe location to rtp to within 10 tries.");
-                    return;
                 }
 
                 // Preload the chunk where the player will be teleported asynchronously
