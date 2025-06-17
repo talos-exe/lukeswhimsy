@@ -26,4 +26,3 @@ Refining help page. Changed /whimsyhelp to /lwhelp.
 
 ## Note: 
 I am working on this plugin in my freetime, so it's definitely not refined, this was just made for fun. Thanks for checking it out.
-Shoutout to Cam

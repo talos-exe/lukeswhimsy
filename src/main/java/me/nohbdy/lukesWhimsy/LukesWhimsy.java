@@ -1,16 +1,16 @@
-package me.nohbdyexe.lukesWhimsy;
-import me.nohbdyexe.lukesWhimsy.commands.*;
+package me.nohbdy.lukesWhimsy;
+import me.nohbdy.lukesWhimsy.commands.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.Listener;
-import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.logging.Level;
 
 
-public final class LukesWhimsy extends JavaPlugin implements @NotNull Listener {
+public final class LukesWhimsy extends JavaPlugin implements Listener {
 
     private DataManager dataManager;
     private HomeDataManager homeDataManager;
@@ -18,7 +18,7 @@ public final class LukesWhimsy extends JavaPlugin implements @NotNull Listener {
     @Override
     public void onEnable() {
         // Plugin startup logic
-        getLogger().info("ver 1.4.2 enabled.");
+        getLogger().info("ver 1.4.3 enabled.");
         getLogger().info("use /lwhelp to get started!");
 
         // Create manager objects
@@ -26,22 +26,22 @@ public final class LukesWhimsy extends JavaPlugin implements @NotNull Listener {
         homeDataManager = new HomeDataManager(this);
 
         // Load commands
-        getCommand("smite").setExecutor(new SmiteCommand(this));
-        getCommand("sit").setExecutor(new SitCommand(this));
-        getCommand("fling").setExecutor(new FlingCommand(this));
-        getCommand("onepunchman").setExecutor(new OnePunchCommand(this));
-        getCommand("catapult").setExecutor(new CatapultCommand(this));
-        getCommand("feed").setExecutor(new FeedCommand(this));
-        getCommand("heal").setExecutor(new HealCommand(this));
-        getCommand("fly").setExecutor(new FlyCommand(this));
-        getCommand("lwhelp").setExecutor(new HelpCommand(this));
-        getCommand("hng").setExecutor(new VillagerSoundCommand(this));
-        getCommand("babytrap").setExecutor(new BabyTrapCommand(this));
-        getCommand("rtp").setExecutor(new RandomTeleportCommand(this));
-        getCommand("back").setExecutor(new BackCommand(this));
-        getCommand("top").setExecutor(new TopCommand(this));
-        getCommand("freeze").setExecutor(new FreezeCommand(this));
-        getCommand("loudmouth").setExecutor(new LoudmouthCommand(this));
+        Objects.requireNonNull(getCommand("smite")).setExecutor(new SmiteCommand(this));
+        Objects.requireNonNull(getCommand("sit")).setExecutor(new SitCommand(this));
+        Objects.requireNonNull(getCommand("fling")).setExecutor(new FlingCommand(this));
+        Objects.requireNonNull(getCommand("onepunchman")).setExecutor(new OnePunchCommand(this));
+        Objects.requireNonNull(getCommand("catapult")).setExecutor(new CatapultCommand(this));
+        Objects.requireNonNull(getCommand("feed")).setExecutor(new FeedCommand(this));
+        Objects.requireNonNull(getCommand("heal")).setExecutor(new HealCommand(this));
+        Objects.requireNonNull(getCommand("fly")).setExecutor(new FlyCommand(this));
+        Objects.requireNonNull(getCommand("lwhelp")).setExecutor(new HelpCommand(this));
+        Objects.requireNonNull(getCommand("hng")).setExecutor(new VillagerSoundCommand(this));
+        Objects.requireNonNull(getCommand("babytrap")).setExecutor(new BabyTrapCommand(this));
+        Objects.requireNonNull(getCommand("rtp")).setExecutor(new RandomTeleportCommand(this));
+        Objects.requireNonNull(getCommand("back")).setExecutor(new BackCommand(this));
+        Objects.requireNonNull(getCommand("top")).setExecutor(new TopCommand(this));
+        Objects.requireNonNull(getCommand("freeze")).setExecutor(new FreezeCommand(this));
+        Objects.requireNonNull(getCommand("loudmouth")).setExecutor(new LoudmouthCommand(this));
         //getCommand("home").setExecutor(new HomeCommand(this));
 
         // Load data from file
@@ -52,7 +52,7 @@ public final class LukesWhimsy extends JavaPlugin implements @NotNull Listener {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        getLogger().info("ver 1.4.2 disabled.");
+        getLogger().info("ver 1.4.3 disabled.");
         cleanupAllHashes();
         homeDataManager.saveHomes();
     }

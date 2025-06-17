@@ -1,8 +1,7 @@
 name: LukesWhimsy
-version: '1.4.2'
-main: me.nohbdyexe.lukesWhimsy.LukesWhimsy
-author: nohbdy-exe
-website: https://github.com/nohbdy-exe/lukeswhimsy
+version: '1.4.4'
+main: me.nohbdy.lukesWhimsy.LukesWhimsy
+author: nohbdy
 api-version: '1.21'
 commands:
   smite:
