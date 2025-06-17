@@ -20,12 +20,10 @@ import java.util.UUID;
 
 public class OnePunchCommand implements CommandExecutor, Listener {
 
-    private String PLUGIN_PREFIX;
-    private final LukesWhimsy plugin;
+    private final String PLUGIN_PREFIX;
     private final DataManager dataManager;
 
     public OnePunchCommand(LukesWhimsy plugin) {
-        this.plugin = plugin;
         this.dataManager = new DataManager(plugin);
         this.PLUGIN_PREFIX = dataManager.getPluginPrefix();
         plugin.getServer().getPluginManager().registerEvents(this,plugin);
@@ -34,12 +32,11 @@ public class OnePunchCommand implements CommandExecutor, Listener {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase("onepunchman")) {
-            if (!(sender instanceof Player) || !sender.isOp()) {
+            if (!(sender instanceof Player player) || !sender.isOp()) {
                 sender.sendMessage(PLUGIN_PREFIX+"You must be an operator to use this command!");
                 return true;
             }
 
-            Player player = (Player) sender;
             UUID playerId = player.getUniqueId();
             boolean isEnabled = dataManager.getOnePunchPlayers().getOrDefault(playerId, false);
 
@@ -64,8 +61,7 @@ public class OnePunchCommand implements CommandExecutor, Listener {
             Player player = null;
             if (event.getDamager() instanceof Player) {
                 player = (Player) event.getDamager();
-            } else if (event.getDamager() instanceof Arrow) {
-                Arrow arrow = (Arrow) event.getDamager();
+            } else if (event.getDamager() instanceof Arrow arrow) {
                 // Get shooter of arrow
                 if (arrow.getShooter() instanceof Player) {
                     player = (Player) arrow.getShooter();
@@ -73,6 +69,7 @@ public class OnePunchCommand implements CommandExecutor, Listener {
                     return;
                 }
             }
+            assert player != null;
             UUID playerId = player.getUniqueId();
             if (dataManager.getOnePunchPlayers().containsKey(playerId)) {
                 if(!(event.getEntity()instanceof Player) || !dataManager.getOnePunchPlayers().containsKey(event.getEntity().getUniqueId())) {
@@ -100,8 +97,7 @@ public class OnePunchCommand implements CommandExecutor, Listener {
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player) {
-            Player player = (Player) event.getEntity();
+        if (event.getEntity() instanceof Player player) {
             UUID playerId = player.getUniqueId();
             if (dataManager.getOnePunchPlayers().containsKey(playerId)) {
                 // Cancel fire tick damage

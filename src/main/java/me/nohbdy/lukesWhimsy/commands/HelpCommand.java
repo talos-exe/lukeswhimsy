@@ -1,6 +1,4 @@
 package me.nohbdy.lukesWhimsy.commands;
-
-import me.nohbdy.lukesWhimsy.DataManager;
 import me.nohbdy.lukesWhimsy.LukesWhimsy;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

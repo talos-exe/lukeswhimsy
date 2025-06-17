@@ -72,60 +72,57 @@ public class RandomTeleportCommand implements CommandExecutor {
 
     private void teleportPlayerAsync(Player player) {
         // Run the teleport process asynchronously as to not lag the server.
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                // Get the world border size
-                int borderSize = (int) player.getWorld().getWorldBorder().getSize() / 2;
-                // Generate random coordinates within the world border
-                Random random = new Random();
-                Location randomLocation = null;
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            // Get the world border size
+            int borderSize = (int) player.getWorld().getWorldBorder().getSize() / 2;
+            // Generate random coordinates within the world border
+            Random random = new Random();
+            Location randomLocation = null;
 
-                // Attempts to find safe locations asynchronously
-                for (int attempts = 0; attempts < 10; attempts++) {
-                    int x = random.nextInt(borderSize * 2) - borderSize; // Get a random X coordinate
-                    int z = random.nextInt(borderSize * 2) - borderSize; // Get a random Z coordinate
-                    int y = player.getWorld().getHighestBlockYAt(x, z); // Get the highest Y value for the new location.
+            // Attempts to find safe locations asynchronously
+            for (int attempts = 0; attempts < 10; attempts++) {
+                int x = random.nextInt(borderSize * 2) - borderSize; // Get a random X coordinate
+                int z = random.nextInt(borderSize * 2) - borderSize; // Get a random Z coordinate
+                int y = player.getWorld().getHighestBlockYAt(x, z); // Get the highest Y value for the new location.
 
-                    // Check if location is safe.
-                    randomLocation = new Location(player.getWorld(), x, y, z);
-                    Block block = randomLocation.getBlock();
+                // Check if location is safe.
+                randomLocation = new Location(player.getWorld(), x, y, z);
+                Block block = randomLocation.getBlock();
 
-                    // Make sure we're not on water, lava, or solid ground.
-                    if (block.getType().isSolid() && block.getType() != Material.WATER && block.getType() != Material.LAVA) {
-                        // Check for air block above
-                        if (block.getRelative(0, 1, 0).getType() == Material.AIR) {
-                            // Check if surrounding area is clear
-                            if (isAreaClear(randomLocation)) {
-                                break; // Found safe location
-                            }
+                // Make sure we're not on water, lava, or solid ground.
+                if (block.getType().isSolid() && block.getType() != Material.WATER && block.getType() != Material.LAVA) {
+                    // Check for air block above
+                    if (block.getRelative(0, 1, 0).getType() == Material.AIR) {
+                        // Check if surrounding area is clear
+                        if (isAreaClear(randomLocation)) {
+                            break; // Found safe location
                         }
                     }
                 }
-
-                // Preload the chunk where the player will be teleported asynchronously
-                final Chunk chunk = randomLocation.getChunk();
-                Bukkit.getScheduler().runTask(plugin, () -> {
-                    player.getWorld().loadChunk(chunk);
-                    // Load surrounding chunks synchronously
-                    for (int dx = -1; dx <= 1; dx++) {
-                        for (int dz = -1; dz <= 1; dz++) {
-                            final int offsetX = chunk.getX() + dx;
-                            final int offsetZ = chunk.getZ() + dz;
-                            Bukkit.getScheduler().runTask(plugin, () -> {
-                                player.getWorld().loadChunk(offsetX, offsetZ);
-                            });
-                        }
-                    }
-                });
-
-                // Teleport the player to the random location (synchronous)
-                Location finalRandomLocation = randomLocation;
-                Bukkit.getScheduler().runTask(plugin, () -> {
-                    player.teleport(finalRandomLocation);
-                    player.sendMessage(PLUGIN_PREFIX + "You have teleported to location: " + finalRandomLocation.getX() + ", " + finalRandomLocation.getY() + ", " + finalRandomLocation.getZ());
-                });
             }
+
+            // Preload the chunk where the player will be teleported asynchronously
+            final Chunk chunk = randomLocation.getChunk();
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                player.getWorld().loadChunk(chunk);
+                // Load surrounding chunks synchronously
+                for (int dx = -1; dx <= 1; dx++) {
+                    for (int dz = -1; dz <= 1; dz++) {
+                        final int offsetX = chunk.getX() + dx;
+                        final int offsetZ = chunk.getZ() + dz;
+                        Bukkit.getScheduler().runTask(plugin, () -> {
+                            player.getWorld().loadChunk(offsetX, offsetZ);
+                        });
+                    }
+                }
+            });
+
+            // Teleport the player to the random location (synchronous)
+            Location finalRandomLocation = randomLocation;
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                player.teleport(finalRandomLocation);
+                player.sendMessage(PLUGIN_PREFIX + "You have teleported to location: " + finalRandomLocation.getX() + ", " + finalRandomLocation.getY() + ", " + finalRandomLocation.getZ());
+            });
         });
     }
 

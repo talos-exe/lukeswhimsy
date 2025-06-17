@@ -35,7 +35,7 @@ public class FlingCommand implements CommandExecutor {
             }
 
             double DEFAULT_KNOCKBACK_STRENGTH = 1.5;
-            double knockbackStrength = DEFAULT_KNOCKBACK_STRENGTH; // Initialize with default
+            double knockbackStrength; // Initialize with default
 
             if (args.length == 0) {
                 // Check if the first argument is a valid number

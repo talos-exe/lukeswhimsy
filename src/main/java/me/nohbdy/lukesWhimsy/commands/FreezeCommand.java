@@ -76,9 +76,10 @@ public class FreezeCommand implements CommandExecutor, Listener {
         if (sender instanceof ConsoleCommandSender) {
             if (args.length == 1) {
                 Player targetPlayer = Bukkit.getPlayer(args[0]);
+                assert targetPlayer != null;
                 UUID targetUUID = targetPlayer.getUniqueId();
                 boolean isFrozen = frozenPlayers.getOrDefault(targetUUID,false);
-                if (targetPlayer != null && targetPlayer.isOnline()) {
+                if (targetPlayer.isOnline()) {
                     // Toggle freeze state for the target player
                     if (isFrozen) {
                         // Unfreeze the player

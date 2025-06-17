@@ -49,7 +49,7 @@ public class CatapultCommand implements CommandExecutor, Listener {
             landingLocation.setY(playerLocation.getY()); // Launch the arrow above the player
 
             // Spawn the arrow
-            FallingBlock fallingBlock = player.getWorld().spawnFallingBlock(playerLocation.add(0,1.5,0), Material.ANVIL.createBlockData());
+            FallingBlock fallingBlock = player.getWorld().spawnFallingBlock(playerLocation.add(0, 1.5, 0), Material.ANVIL.createBlockData());
             fallingBlock.setVelocity(direction);
             fallingBlock.setDropItem(false); // Prevent block drops
 
