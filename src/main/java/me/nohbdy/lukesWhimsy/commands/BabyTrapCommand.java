@@ -63,11 +63,11 @@ public class BabyTrapCommand implements CommandExecutor, Listener {
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player attacker) {
-            Player victim = (Player) event.getEntity();
-            UUID attackerId = attacker.getUniqueId();
-            UUID victimId = victim.getUniqueId();
-            if (activeTraps.getOrDefault(victimId, false)) {
-                if (event.getEntity() instanceof Player) {
+            if (event.getEntity() instanceof Player victim) {
+                UUID attackerId = attacker.getUniqueId();
+                UUID victimId = victim.getUniqueId();
+
+                if (activeTraps.getOrDefault(victimId, false)) {
                     summonBabyZombiesAround(attacker.getLocation());
                 }
             }
